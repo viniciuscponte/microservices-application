@@ -1,0 +1,39 @@
+services:
+  publisher-service:
+    image: publisher-service:latest
+    container_name: publisher-service
+    ports:
+      - "8081:8080" # Mapeia a porta do host para o container
+    environment:
+      DATABASE_URL: jdbc:mysql://host.docker.internal:3306/yourdatabase
+      LOCALSTACK_ENDPOINT: http://host.docker.internal:4566
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      AWS_REGION: SA-EAST-1
+
+  consumer-service:
+    image: consumer-service:latest
+    container_name: consumer-service
+    ports:
+      - "8082:8080"
+    volumes:
+      - ./consumer/data:/data # Volume para salvar arquivos localmente
+    environment:
+      DATABASE_URL: jdbc:mysql://host.docker.internal:3306/yourdatabase
+      LOCALSTACK_ENDPOINT: http://host.docker.internal:4566
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      AWS_REGION: SA-EAST-1
+
+  authenticator-service:
+    image: authenticator-service:latest
+    container_name: authenticator-service
+    ports:
+      - "8083:8080"
+    environment:
+      DATABASE_URL: jdbc:mysql://host.docker.internal:3306/yourdatabase
+      
+
+networks:
+  my_network:
+    driver: bridge
